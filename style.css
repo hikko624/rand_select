@@ -1,0 +1,14 @@
+body {
+    text-align: center;
+}
+
+#drop-box {
+    border-style: dotted;
+    margin: 5% 10%;
+    padding: 5%;
+}
+
+#drop-box.dragover {
+    border: 2px solid #16a5bf;
+    background: rgba(22, 165, 191, 0.6);
+}

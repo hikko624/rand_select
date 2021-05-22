@@ -2,20 +2,36 @@
 <html lang="ja">
 
   <head>
-    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="ress.css" type="text/css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+    <link rel="stylesheet" href="style.css" type="text/css">
     <title>Document</title>
   </head>
-  <header>
-
-  </header>
   <body>
+    <header>
+      <h1 class="title">スコアランダムセレクト</h1>
+    </header>
+    <div id="drop-box">
+      <p>ここにファイルをドロップしてください</p>
+      <p>または</p>
 
+      <div class="file is-centered is-normal is-boxed">
+        <label class="file-label">
+          <input class="file-input" type="file" accept="text/csv">
+          <span class="file-cta">
+            <span class="file-label">
+              ファイルを選択
+            </span>
+          </span>
+        </label>
+      </div>
+    </div>
+    <div id="result"></div>
+    <footer>
+      <script type="text/javascript" src="script.js"></script>
+    </footer>
   </body>
-  <footer>
-    <script type="text/javascript" src="script.js"></script>
-  </footer>
-
 </html>
