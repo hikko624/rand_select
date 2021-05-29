@@ -38,7 +38,7 @@ dropBox.addEventListener('drop', function (e) {
     dropBox.classList.remove('dragover');
 
     // ドロップしたファイルの取得
-    var files = e.dataTransfer.files;
+    let files = e.dataTransfer.files;
     let result = document.getElementById('result');
     let reader = new FileReader();
     if (typeof files[0] !== 'undefined') {
