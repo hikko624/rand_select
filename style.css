@@ -26,3 +26,13 @@ body {
     margin-top: 1%;
     margin-bottom: 3%;
 }
+
+.text-blur {
+    color: transparent;
+    text-shadow: 0px 0px 10px blanchedalmond;
+}
+
+.music-submit {
+    font-weight: bold;
+    background-color: red;
+}
