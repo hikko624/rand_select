@@ -20,6 +20,41 @@ inputCsv.addEventListener('change', function (e) {
     }
 }, false);
 
+// ドラッグオーバー時の処理
+dropBox.addEventListener('dragover', function (e) {
+    e.preventDefault();
+    dropBox.classList.add('dragover');
+});
+
+// ドラッグアウト時の処理
+dropBox.addEventListener('dragleave', function (e) {
+    e.preventDefault();
+    dropBox.classList.remove('dragover');
+});
+
+
+dropBox.addEventListener('drop', function (e) {
+    e.preventDefault();
+    dropBox.classList.remove('dragover');
+
+    // ドロップしたファイルの取得
+    var files = e.dataTransfer.files;
+    let result = document.getElementById('result');
+    let reader = new FileReader();
+    if (typeof files[0] !== 'undefined') {
+        //ファイルが正常に受け取れた際の処理
+        reader.onload = () => {
+            let output = createResult(reader.result);
+            result.append(output);
+            console.log(output);
+        };
+        reader.readAsText(files[0]);
+    } else {
+        //ファイルが受け取れなかった際の処理
+        alert('Can not load file.');
+    }
+});
+
 // クリックすると曲名と投稿者が表示される処理
 function clickToShowMusic(e) {
     var buttonElement = document.getElementById(e.target.id);
