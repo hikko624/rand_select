@@ -1,5 +1,7 @@
 let dropBox = document.getElementById('drop-box');
 let inputCsv = document.getElementById('input-csv');
+let submitMusicNameList = {};
+let submitMusicGameNameList = {};
 
 // ファイルを選択する５ときの処理
 inputCsv.addEventListener('change', function (e) {
@@ -81,12 +83,49 @@ function clickToSubmit(e) {
         var targetTableRow = buttonElement.parentElement.parentElement;
         targetTableRow.className = 'music-submit';
         buttonElement.onclick = '';
+
+        var targetMusic = targetTableRow.children;
+        console.log({
+            'targetMusic': targetMusic,
+            'buttonElement': buttonElement,
+            'id': buttonElement.id,
+            'e': e,
+            'musicName': targetMusic[0].childNodes[0].textContent,
+        });
+        submitMusicNameList[buttonElement.id] = targetMusic[0].childNodes[0].textContent;
+
         buttonElement.textContent = '確定しました';
+    }
+}
+
+// 選択した曲リストがポップアップされる
+function popupMusicList(e) {
+    console.log({
+        'e': e,
+        'submitMusicNameList': submitMusicNameList,
+        'submitMusicGameNameList': submitMusicGameNameList,
+    });
+
+    result = confirm('本当によろしいですか??責任取れますか??');
+    if (result) {
+        const divDialog = document.getElementById('result-modal');
+        Object.keys(submitMusicGameNameList).map(musicId => {
+            divDialog.append(submitMusicGameNameList[musicId] + '\n');
+            Object.keys(submitMusicNameList).map(musicPostId => {
+                if (musicPostId.includes(musicId)) {
+                    divDialog.append(submitMusicNameList[musicPostId] + '\n');
+                }
+            })
+        })
+        console.log(divDialog);
     }
 }
 
 // csvファイルを読み込んだらtableを作成する
 function createResult(result) {
+    let submitMusicButton = document.getElementById('submit-music');
+    submitMusicButton.classList.remove('button-none');
+    submitMusicButton.addEventListener('click', popupMusicList);
     let postInfoArray = result.split("\n");
     // 各投稿者の投稿情報のリスト[timestamp, CN, musicName...]
     let tableHeadList = postInfoArray[0].split(',');
@@ -100,6 +139,7 @@ function createResult(result) {
         var rowHead = document.createElement("tr");
         var cellHeadMusicName = document.createElement("td");
         var musicText = document.createTextNode(tableHeadList[i]);
+        submitMusicGameNameList['music' + i] = musicText.textContent;
         cellHeadMusicName.appendChild(document.createTextNode("曲名"));
         var cellHeadPostName = document.createElement("td");
         cellHeadPostName.appendChild(document.createTextNode("投稿者"));
@@ -147,5 +187,6 @@ function createResult(result) {
         element.appendChild(tbl);
         response.appendChild(element);
     }
+
     return response;
 }

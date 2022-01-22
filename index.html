@@ -32,8 +32,24 @@
     </div>
   </div>
   <div id="result"></div>
+  <div id="open-result-modal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+      <div class="box">
+        <textarea id="result-modal" rows="50" cols="100" tabindex=""></textarea>
+      </div>
+    </div>
+
+    <button class="modal-close is-large" aria-label="close"></button>
+  </div>
+  <div class="button-magin">
+    <button id="submit-music" class="js-modal-trigger button submit-button button-none" data-target="open-result-modal">
+      全機種選曲完了
+    </button>
+  </div>
   <footer>
     <script type="text/javascript" src="script.js"></script>
+    <script type="text/javascript" src="modal.js"></script>
     <p>&copy; 2021 @HIKKO624 </p>
   </footer>
 </body>
