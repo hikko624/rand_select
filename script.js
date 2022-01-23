@@ -11,7 +11,6 @@ inputCsv.addEventListener('change', function (e) {
         reader.onload = () => {
             let output = createResult(reader.result);
             result.append(output);
-            console.log(output);
         };
         reader.readAsText(files[0]);
     } else {
@@ -46,7 +45,6 @@ dropBox.addEventListener('drop', function (e) {
         reader.onload = () => {
             let output = createResult(reader.result);
             result.append(output);
-            console.log(output);
         };
         reader.readAsText(files[0]);
     } else {
@@ -81,9 +79,26 @@ function clickToSubmit(e) {
         var targetTableRow = buttonElement.parentElement.parentElement;
         targetTableRow.className = 'music-submit';
         buttonElement.onclick = '';
+        var targetMusic = targetTableRow.children;
+        submitMusicNameList[buttonElement.id] = targetMusic[0].childNodes[0].textContent;
         buttonElement.textContent = '確定しました';
     }
 }
+
+// 選択した曲リストがポップアップされる
+function popupMusicList() {
+    let divDialog = document.getElementById('result-modal');
+    divDialog.textContent = '';
+    Object.keys(submitMusicGameNameList).map(musicId => {
+        divDialog.append(submitMusicGameNameList[musicId] + '\n');
+        Object.keys(submitMusicNameList).map(musicPostId => {
+            if (musicPostId.includes(musicId)) {
+                divDialog.append(submitMusicNameList[musicPostId] + '\n');
+            }
+        })
+    })
+}
+
 
 // csvファイルを読み込んだらtableを作成する
 function createResult(result) {
