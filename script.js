@@ -1,5 +1,7 @@
 let dropBox = document.getElementById('drop-box');
 let inputCsv = document.getElementById('input-csv');
+let submitMusicNameList = {};
+let submitMusicGameNameList = {};
 
 // ファイルを選択する５ときの処理
 inputCsv.addEventListener('change', function (e) {
@@ -99,9 +101,11 @@ function popupMusicList() {
     })
 }
 
-
 // csvファイルを読み込んだらtableを作成する
 function createResult(result) {
+    let submitMusicButton = document.getElementById('submit-music');
+    submitMusicButton.classList.remove('button-none');
+    submitMusicButton.addEventListener('click', popupMusicList);
     let postInfoArray = result.split("\n");
     // 各投稿者の投稿情報のリスト[timestamp, CN, musicName...]
     let tableHeadList = postInfoArray[0].split(',');
@@ -115,6 +119,7 @@ function createResult(result) {
         var rowHead = document.createElement("tr");
         var cellHeadMusicName = document.createElement("td");
         var musicText = document.createTextNode(tableHeadList[i]);
+        submitMusicGameNameList['music' + i] = musicText.textContent;
         cellHeadMusicName.appendChild(document.createTextNode("曲名"));
         var cellHeadPostName = document.createElement("td");
         cellHeadPostName.appendChild(document.createTextNode("投稿者"));
@@ -162,5 +167,6 @@ function createResult(result) {
         element.appendChild(tbl);
         response.appendChild(element);
     }
+
     return response;
 }

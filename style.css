@@ -40,3 +40,14 @@ body {
     font-weight: bold;
     background-color: red;
 }
+
+.button-magin {
+    margin-top: 5%;
+    margin-right: auto;
+    margin-bottom: 5%;
+    margin-left: auto;
+}
+
+.button-none {
+    display: none;
+}
