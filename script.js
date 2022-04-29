@@ -112,11 +112,14 @@ function createResult(result) {
     let response = document.createElement('div');
     for (let i = 2; i < tableHeadList.length; i++) {
         var element = document.createElement('div');
-        element.className = 'table-margin';
+        element.classList.add('table-margin');
         var tbl = document.createElement('table');
-        tbl.className = 'table table-center';
+        tbl.classList.add('table', 'table-center', 'music-table');
         var tblHead = document.createElement('thead');
         var rowHead = document.createElement("tr");
+        var cellHeadRowNum = document.createElement("td");
+        // 曲の行番号用
+        cellHeadRowNum.appendChild(document.createTextNode("No."));
         var cellHeadMusicName = document.createElement("td");
         var musicText = document.createTextNode(tableHeadList[i]);
         submitMusicGameNameList['music' + i] = musicText.textContent;
@@ -124,6 +127,7 @@ function createResult(result) {
         var cellHeadPostName = document.createElement("td");
         cellHeadPostName.appendChild(document.createTextNode("投稿者"));
         var cellHeadButton = document.createElement("td");
+        rowHead.appendChild(cellHeadRowNum);
         rowHead.appendChild(cellHeadMusicName);
         rowHead.appendChild(cellHeadPostName);
         rowHead.appendChild(cellHeadButton);
@@ -139,9 +143,12 @@ function createResult(result) {
                 continue;
             }
 
+            rowBody.classList.add('body-row');
+            var cellBodyRowNum = document.createElement('td');
+            cellBodyRowNum.classList.add('row-num');
             var cellBodyMusicName = document.createElement('td');
             cellBodyMusicName.appendChild(document.createTextNode(postInfo[i]));
-            cellBodyMusicName.className = 'text-blur';
+            cellBodyMusicName.classList.add('text-blur');
             var cellBodyPostName = document.createElement('td');
             var postName = postInfo[1];
             cellBodyPostName.appendChild(document.createTextNode(postName));
@@ -153,6 +160,7 @@ function createResult(result) {
             showNameButton.onclick = clickToShowMusic;
             showNameButton.id = id;
             cellBodyButton.appendChild(showNameButton);
+            rowBody.appendChild(cellBodyRowNum);
             rowBody.appendChild(cellBodyMusicName);
             rowBody.appendChild(cellBodyPostName);
             rowBody.appendChild(cellBodyButton);
