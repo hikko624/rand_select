@@ -51,3 +51,15 @@ body {
 .button-none {
     display: none;
 }
+
+.music-table {
+    counter-reset: rowCount;
+}
+
+.body-row {
+    counter-increment: rowCount;
+}
+
+.row-num::before {
+    content: counter(rowCount);
+}
