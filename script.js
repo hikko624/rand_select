@@ -92,7 +92,11 @@ function popupMusicList() {
     let divDialog = document.getElementById('result-modal');
     divDialog.textContent = '';
     Object.keys(submitMusicGameNameList).map(musicId => {
-        divDialog.append(submitMusicGameNameList[musicId] + '\n');
+        let str = submitMusicGameNameList[musicId];
+        let startIndex = str.search(/「/);
+        let endIndex = str.search(/」/);
+        let musicGameName = str.substring(startIndex + 1, endIndex);
+        divDialog.append(musicGameName + '\n');
         Object.keys(submitMusicNameList).map(musicPostId => {
             if (musicPostId.includes(musicId)) {
                 divDialog.append(submitMusicNameList[musicPostId] + '\n');
