@@ -61,7 +61,7 @@ function clickToShowMusic(e) {
     buttonElement.textContent = '投稿者を見る';
     buttonElement.onclick = clickToShowName
     var targetTableRow = buttonElement.parentElement.parentElement;
-    targetTableRow.childNodes[0].className = '';
+    targetTableRow.childNodes[1].classList.remove('text-blur');
 }
 
 // クリックすると曲名と投稿者が表示される処理
@@ -70,7 +70,7 @@ function clickToShowName(e) {
     buttonElement.textContent = 'この曲に決定する';
     buttonElement.onclick = clickToSubmit;
     var targetTableRow = buttonElement.parentElement.parentElement;
-    targetTableRow.childNodes[1].className = '';
+    targetTableRow.childNodes[2].classList.remove('text-blur');
 }
 
 // スコアタ曲を決定する
@@ -79,10 +79,11 @@ function clickToSubmit(e) {
     var result = confirm('本当にこの曲にしますか？');
     if (result) {
         var targetTableRow = buttonElement.parentElement.parentElement;
-        targetTableRow.className = 'music-submit';
+        targetTableRow.classList.add('music-submit');
         buttonElement.onclick = '';
         var targetMusic = targetTableRow.children;
-        submitMusicNameList[buttonElement.id] = targetMusic[0].childNodes[0].textContent;
+        console.log(targetMusic);
+        submitMusicNameList[buttonElement.id] = targetMusic[1].childNodes[0].textContent;
         buttonElement.textContent = '確定しました';
     }
 }
@@ -102,6 +103,7 @@ function popupMusicList() {
                 divDialog.append(submitMusicNameList[musicPostId] + '\n');
             }
         })
+        divDialog.append('\n');
     })
 }
 
