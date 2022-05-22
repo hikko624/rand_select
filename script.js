@@ -144,14 +144,25 @@ function createResult(result) {
             var rowBody = document.createElement('tr');
             var postInfo = postInfoArray[j].split(',');
             var id = 'music' + i + 'post' + j;
+            // 当日エラー起きたときに、その原因を見れるようにするために残す
+            console.log({
+                'id': id,
+                'postInfo': postInfo[i],
+                'rowBody': rowBody,
+            });
+
             // 投稿していない場合、スキップ
-            console.log(id);
-            console.log(postInfo);
             if (!postInfo[i]) {
                 continue;
             }
 
-            if (!postInfo[i].trim()) {
+            // 全ての改行コードを削除
+            postInfo[i] = postInfo[i].replace(/\r?\n/g, '');
+            // 空白を削除
+            postInfo[i] = postInfo[i].trim();
+
+            // 改行コードや空白を除いた場合でも空白の場合、スキップ
+            if (!postInfo[i]) {
                 continue;
             }
 
