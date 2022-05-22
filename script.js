@@ -145,6 +145,12 @@ function createResult(result) {
             var postInfo = postInfoArray[j].split(',');
             var id = 'music' + i + 'post' + j;
             // 投稿していない場合、スキップ
+            console.log(id);
+            console.log(postInfo);
+            if (!postInfo[i]) {
+                continue;
+            }
+
             if (!postInfo[i].trim()) {
                 continue;
             }
