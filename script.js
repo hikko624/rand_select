@@ -107,6 +107,15 @@ function popupMusicList() {
     })
 }
 
+function randomResult(postInfoArray) {
+    for (let i = postInfoArray.length; 1 < i; i--) {
+        let k = Math.floor(Math.random() * i);
+        [postInfoArray[k], postInfoArray[i - 1]] = [postInfoArray[i - 1], postInfoArray[k]];
+    }
+
+    return postInfoArray;
+}
+
 // csvファイルを読み込んだらtableを作成する
 function createResult(result) {
     let submitMusicButton = document.getElementById('submit-music');
@@ -115,6 +124,8 @@ function createResult(result) {
     let postInfoArray = result.split("\n");
     // 各投稿者の投稿情報のリスト[timestamp, CN, musicName...]
     let tableHeadList = postInfoArray[0].split(',');
+    postInfoArray.shift();
+    postInfoArray = randomResult(postInfoArray);
     let response = document.createElement('div');
     for (let i = 2; i < tableHeadList.length; i++) {
         var element = document.createElement('div');
@@ -140,7 +151,7 @@ function createResult(result) {
         tblHead.appendChild(rowHead);
 
         var tblBody = document.createElement('tbody');
-        for (let j = 1; j < postInfoArray.length; j++) {
+        for (let j = 0; j < postInfoArray.length; j++) {
             var rowBody = document.createElement('tr');
             var postInfo = postInfoArray[j].split(',');
             var id = 'music' + i + 'post' + j;
