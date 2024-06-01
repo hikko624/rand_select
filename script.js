@@ -3,7 +3,7 @@ let inputCsv = document.getElementById('input-csv');
 let submitMusicNameList = {};
 let submitMusicGameNameList = {};
 
-// ファイルを選択する５ときの処理
+// ファイルを選択するときの処理
 inputCsv.addEventListener('change', function (e) {
     let files = e.target.files;
     let result = document.getElementById('result');
@@ -33,7 +33,7 @@ dropBox.addEventListener('dragleave', function (e) {
     dropBox.classList.remove('dragover');
 });
 
-
+// ドロップ時の処理
 dropBox.addEventListener('drop', function (e) {
     e.preventDefault();
     dropBox.classList.remove('dragover');
@@ -107,7 +107,8 @@ function popupMusicList() {
     })
 }
 
-function randomResult(postInfoArray) {
+// 配列をシャッフルする
+function shuffleWithinArray(postInfoArray) {
     for (let i = postInfoArray.length; 1 < i; i--) {
         let k = Math.floor(Math.random() * i);
         [postInfoArray[k], postInfoArray[i - 1]] = [postInfoArray[i - 1], postInfoArray[k]];
@@ -121,13 +122,17 @@ function createResult(result) {
     let submitMusicButton = document.getElementById('submit-music');
     submitMusicButton.classList.remove('button-none');
     submitMusicButton.addEventListener('click', popupMusicList);
+
+    // csvの整形
     let postInfoArray = result.split("\n");
     // 各投稿者の投稿情報のリスト[timestamp, CN, musicName...]
     let tableHeadList = postInfoArray[0].split(',');
     postInfoArray.shift();
-    postInfoArray = randomResult(postInfoArray);
     let response = document.createElement('div');
+
+    // 機種ごとに繰り返す
     for (let i = 2; i < tableHeadList.length; i++) {
+        // 全体
         var element = document.createElement('div');
         element.classList.add('table-margin');
         var tbl = document.createElement('table');
@@ -135,6 +140,8 @@ function createResult(result) {
         var tblHead = document.createElement('thead');
         var rowHead = document.createElement("tr");
         var cellHeadRowNum = document.createElement("td");
+
+        // 見出し
         // 曲の行番号用
         cellHeadRowNum.appendChild(document.createTextNode("No."));
         var cellHeadMusicName = document.createElement("td");
@@ -150,7 +157,12 @@ function createResult(result) {
         rowHead.appendChild(cellHeadButton);
         tblHead.appendChild(rowHead);
 
+
+        // 応募された項目
         var tblBody = document.createElement('tbody');
+        // シャッフルする
+        postInfoArray = shuffleWithinArray(postInfoArray);
+        // 人ごとに繰り返す
         for (let j = 0; j < postInfoArray.length; j++) {
             var rowBody = document.createElement('tr');
             var postInfo = postInfoArray[j].split(',');
@@ -169,7 +181,7 @@ function createResult(result) {
 
             // 全ての改行コードを削除
             postInfo[i] = postInfo[i].replace(/\r?\n/g, '');
-            // 空白を削除
+            // 両端の空白を削除
             postInfo[i] = postInfo[i].trim();
 
             // 改行コードや空白を除いた場合でも空白の場合、スキップ
@@ -200,6 +212,8 @@ function createResult(result) {
             rowBody.appendChild(cellBodyButton);
             tblBody.appendChild(rowBody);
         }
+
+        // 整形
         tbl.appendChild(tblHead);
         tbl.appendChild(tblBody);
         let subtitle = document.createElement('h2');
