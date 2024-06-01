@@ -116,6 +116,56 @@ function randomResult(postInfoArray) {
     return postInfoArray;
 }
 
+// ダブルクォーテーションに対応したcsvファイル1行分割関数
+// 参考: https://qiita.com/hatorijobs/items/dd0c730e6faba0c84203
+function csvSplit(line) {
+
+    var c = "";
+    var s = new String();
+    var data = new Array();
+    var inQuoteFlg = false;
+    var QuoteRemoveFlg = false;
+
+    for (var i = 0; i < line.length; i++) {
+
+        c = line.charAt(i);
+        if (c == "," && !inQuoteFlg) {
+            data.push(s.toString());
+            s = "";
+        }
+        else if (c == "," && inQuoteFlg) {
+            s = s + c;
+        }
+        // 入りの"
+        else if (c == '"' && !inQuoteFlg) {
+            inQuoteFlg = true;
+        }
+        else if (c == '"' && inQuoteFlg){
+            // 抜けの"
+            if( [",","\n"].includes(line.charAt(i+1)) ) {
+                inQuoteFlg = false;
+            }
+            // 本来の"はエクスポート時""にエスケープされているので、それを"に戻す
+            else if( QuoteRemoveFlg ) {
+                QuoteRemoveFlg = false;
+            }
+            else {
+                s = s + c;
+                if( !QuoteRemoveFlg ) QuoteRemoveFlg = true;
+            }
+        }
+        else {
+            s = s + c;
+        }
+
+    }
+
+    if( s.length>0 ) data.push(s.toString());
+    return data;
+
+}
+
+
 // csvファイルを読み込んだらtableを作成する
 function createResult(result) {
     let submitMusicButton = document.getElementById('submit-music');
@@ -123,7 +173,7 @@ function createResult(result) {
     submitMusicButton.addEventListener('click', popupMusicList);
     let postInfoArray = result.split("\n");
     // 各投稿者の投稿情報のリスト[timestamp, CN, musicName...]
-    let tableHeadList = postInfoArray[0].split(',');
+    let tableHeadList = csvSplit(postInfoArray[0]);
     postInfoArray.shift();
     postInfoArray = randomResult(postInfoArray);
     let response = document.createElement('div');
@@ -153,7 +203,7 @@ function createResult(result) {
         var tblBody = document.createElement('tbody');
         for (let j = 0; j < postInfoArray.length; j++) {
             var rowBody = document.createElement('tr');
-            var postInfo = postInfoArray[j].split(',');
+            var postInfo = csvSplit(postInfoArray[j]);
             var id = 'music' + i + 'post' + j;
             // 当日エラー起きたときに、その原因を見れるようにするために残す
             console.log({
