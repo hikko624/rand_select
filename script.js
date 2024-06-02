@@ -94,9 +94,9 @@ function popupMusicList() {
     divDialog.textContent = '';
     Object.keys(submitMusicGameNameList).map(musicId => {
         let str = submitMusicGameNameList[musicId];
-        let startIndex = str.search(/「/);
-        let endIndex = str.search(/」/);
-        let musicGameName = str.substring(startIndex + 1, endIndex);
+        // カギカッコで囲われた機種名を取得
+        let musicGameName = str.match(/[\u300c\uff62].*[\u300d\uff63]/)[0].slice(1,-1);
+
         divDialog.append('【' + musicGameName + '】\n');
         Object.keys(submitMusicNameList).map(musicPostId => {
             if (musicPostId.includes(musicId)) {
