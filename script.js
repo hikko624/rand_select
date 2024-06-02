@@ -97,7 +97,7 @@ function popupMusicList() {
         let startIndex = str.search(/「/);
         let endIndex = str.search(/」/);
         let musicGameName = str.substring(startIndex + 1, endIndex);
-        divDialog.append(musicGameName + '\n');
+        divDialog.append('【' + musicGameName + '】\n');
         Object.keys(submitMusicNameList).map(musicPostId => {
             if (musicPostId.includes(musicId)) {
                 divDialog.append(submitMusicNameList[musicPostId] + '\n');
