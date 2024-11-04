@@ -40,7 +40,7 @@ function handleCSVFile(files) {
         reader.onload = () => {
             let output = createResult(reader.result);
             let musicGameList = Object.values(submitMusicGameNameList);
-            alert("募集した機種が以下の"+ musicGameList.length + "機種であることを確認してください。\n\n・" +musicGameList.join('\n・') + "\n\n機種が少ない場合は、募集文の機種名が「」で囲まれているか確認してください。");
+            alert('募集した機種が以下の'+ musicGameList.length + '機種であることを確認してください。\n\n・' +musicGameList.join('\n・') + '\n\n機種が少ない場合は、募集文の機種名が「」で囲まれているか確認してください。');
             result.append(output);
         };
         reader.readAsText(files[0]);
@@ -72,11 +72,11 @@ function clickToShowName(e) {
 function clickToSubmit(e) {
     var buttonElement = document.getElementById(e.target.id);
 
-    var musicGameId = buttonElement.id.split("p")[0];
+    var musicGameId = buttonElement.id.split('p')[0];
     // これまでにその機種で選ばれた曲数
     var songCountSelected = Object.keys(submitMusicNameList).filter(key => key.includes(musicGameId)).length;
 
-    var result = confirm('本当にこの曲にしますか？\n'+submitMusicGameNameList[musicGameId]+"選択曲数: " + songCountSelected + " → " + (songCountSelected+1));
+    var result = confirm('本当にこの曲にしますか？\n'+submitMusicGameNameList[musicGameId]+'選択曲数: ' + songCountSelected + ' → ' + (songCountSelected+1));
     if (result) {
         var targetTableRow = buttonElement.parentElement.parentElement;
         targetTableRow.classList.add('music-submit');
@@ -127,11 +127,11 @@ function csvSplit(line) {
     for (var i = 0; i < line.length; i++) {
 
         c = line.charAt(i);
-        if (c == "," && !inQuoteFlg) {
+        if (c == ',' && !inQuoteFlg) {
             data.push(s.toString());
             s = "";
         }
-        else if (c == "," && inQuoteFlg) {
+        else if (c == ',' && inQuoteFlg) {
             s = s + c;
         }
         // 入りの"
@@ -140,7 +140,7 @@ function csvSplit(line) {
         }
         else if (c == '"' && inQuoteFlg){
             // 抜けの"
-            if( [",","\n"].includes(line.charAt(i+1)) ) {
+            if( [',','\n'].includes(line.charAt(i+1)) ) {
                 inQuoteFlg = false;
             }
             // 本来の"はエクスポート時""にエスケープされているので、それを"に戻す
@@ -174,7 +174,7 @@ function createResult(result) {
     submitMusicButton.addEventListener('click', popupMusicList);
 
     // csvの整形
-    let postInfoArray = result.split("\n");
+    let postInfoArray = result.split('\n');
     // 各投稿者の投稿情報のリスト[timestamp, CN, musicName...]
     let tableHeadList = csvSplit(postInfoArray[0]);
     postInfoArray.shift();
@@ -187,8 +187,8 @@ function createResult(result) {
         var tbl = document.createElement('table');
         tbl.classList.add('table', 'table-center', 'music-table');
         var tblHead = document.createElement('thead');
-        var rowHead = document.createElement("tr");
-        var cellHeadRowNum = document.createElement("td");
+        var rowHead = document.createElement('tr');
+        var cellHeadRowNum = document.createElement('td');
 
         // 機種名の抽出・登録
         var musicRecruitingText = document.createTextNode(tableHeadList[i]);
@@ -200,16 +200,16 @@ function createResult(result) {
         }
         var musicGameName = musicRecruitingText.textContent.match(/[\u300c\uff62].*[\u300d\uff63]/)[0].slice(1,-1);
         submitMusicGameNameList['music' + i] = musicGameName;
-        element.classList.add("music"+i);
+        element.classList.add('music'+i);
 
         // 見出し
         // 曲の行番号用
-        cellHeadRowNum.appendChild(document.createTextNode("No."));
-        var cellHeadMusicName = document.createElement("td");
-        cellHeadMusicName.appendChild(document.createTextNode("曲名"));
-        var cellHeadPostName = document.createElement("td");
-        cellHeadPostName.appendChild(document.createTextNode("投稿者"));
-        var cellHeadButton = document.createElement("td");
+        cellHeadRowNum.appendChild(document.createTextNode('No.'));
+        var cellHeadMusicName = document.createElement('td');
+        cellHeadMusicName.appendChild(document.createTextNode('曲名'));
+        var cellHeadPostName = document.createElement('td');
+        cellHeadPostName.appendChild(document.createTextNode('投稿者'));
+        var cellHeadButton = document.createElement('td');
         rowHead.appendChild(cellHeadRowNum);
         rowHead.appendChild(cellHeadMusicName);
         rowHead.appendChild(cellHeadPostName);
