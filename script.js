@@ -71,7 +71,12 @@ function clickToShowName(e) {
 // スコアタ曲を決定する
 function clickToSubmit(e) {
     var buttonElement = document.getElementById(e.target.id);
-    var result = confirm('本当にこの曲にしますか？');
+
+    var musicGameId = buttonElement.id.split("p")[0];
+    // これまでにその機種で選ばれた曲数
+    var songCountSelected = Object.keys(submitMusicNameList).filter(key => key.includes(musicGameId)).length;
+
+    var result = confirm('本当にこの曲にしますか？\n'+submitMusicGameNameList[musicGameId]+"選択曲数: " + songCountSelected + " → " + (songCountSelected+1));
     if (result) {
         var targetTableRow = buttonElement.parentElement.parentElement;
         targetTableRow.classList.add('music-submit');
