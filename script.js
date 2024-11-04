@@ -92,11 +92,11 @@ function clickToSubmit(e) {
 function popupMusicList() {
     let divDialog = document.getElementById('result-modal');
     divDialog.textContent = '';
-    Object.keys(submitMusicGameNameList).map(musicId => {
-        let musicGameName = submitMusicGameNameList[musicId];
+    Object.keys(submitMusicGameNameList).map(gameId => {
+        let musicGameName = submitMusicGameNameList[gameId];
         divDialog.append('【' + musicGameName + '】\n');
         Object.keys(submitMusicNameList).map(musicPostId => {
-            if (musicPostId.includes(musicId)) {
+            if (musicPostId.includes(gameId)) {
                 divDialog.append(submitMusicNameList[musicPostId] + '\n');
             }
         })
@@ -193,14 +193,14 @@ function createResult(result) {
         // 機種名の抽出・登録
         var musicRecruitingText = document.createTextNode(tableHeadList[i]);
         if (musicRecruitingText.textContent.includes('AC')) {
-            element.classList.add('game-ac');
+            element.classList.add('ac-game');
         }
         else{
-            element.classList.add('game-cs');
+            element.classList.add('cs-game');
         }
         var musicGameName = musicRecruitingText.textContent.match(/[\u300c\uff62].*[\u300d\uff63]/)[0].slice(1,-1);
-        submitMusicGameNameList['music' + i] = musicGameName;
-        element.classList.add('music'+i);
+        submitMusicGameNameList['game' + i] = musicGameName;
+        element.classList.add('game'+i);
 
         // 見出し
         // 曲の行番号用
@@ -224,7 +224,7 @@ function createResult(result) {
         for (let j = 0; j < postInfoArray.length; j++) {
             var rowBody = document.createElement('tr');
             var postInfo = csvSplit(postInfoArray[j]);
-            var id = 'music' + i + 'post' + j;
+            var id = 'game' + i + 'post' + j;
             // 当日エラー起きたときに、その原因を見れるようにするために残す
             console.log({
                 'id': id,
@@ -284,16 +284,16 @@ function createResult(result) {
 
     // AC機種を前にまとめて表示する処理
     const elements = Array.from(response.children);
-    const gameACElements = elements.filter(el => el.classList.contains('game-ac'));
-    const otherElements = elements.filter(el => !el.classList.contains('game-ac'));
+    const gameACElements = elements.filter(el => el.classList.contains('ac-game'));
+    const otherElements = elements.filter(el => !el.classList.contains('ac-game'));
     response.innerHTML = '';
     gameACElements.forEach(el => response.appendChild(el));
     otherElements.forEach(el => response.appendChild(el));
 
     // 選択曲結果表示についても並び替えをする
-    // 各要素から「music」で始まるクラス名を取得しその順番に並び替える
+    // 各要素から「game」で始まるクラス名を取得しその順番に並び替える
     const musicClasses = Array.from(response.children).map(el => {
-        return Array.from(el.classList).find(className => className.startsWith('music'));
+        return Array.from(el.classList).find(className => className.startsWith('game'));
     }).filter(Boolean);
     const musicGameList_tmp = {};
     musicClasses.forEach(key => {
