@@ -6,19 +6,7 @@ let submitMusicGameNameList = {};
 // ファイルを選択するときの処理
 inputCsv.addEventListener('change', function (e) {
     let files = e.target.files;
-    let result = document.getElementById('result');
-    let reader = new FileReader();
-    if (typeof files[0] !== 'undefined') {
-        // ファイルが正常に受け取れた際の処理
-        reader.onload = () => {
-            let output = createResult(reader.result);
-            result.append(output);
-        };
-        reader.readAsText(files[0]);
-    } else {
-        // ファイルが受け取れなかった際の処理
-        alert('Can not load file.');
-    }
+    handleCSVFile(files);
 }, false);
 
 // ドラッグオーバー時の処理
@@ -40,6 +28,11 @@ dropBox.addEventListener('drop', function (e) {
 
     // ドロップしたファイルの取得
     let files = e.dataTransfer.files;
+    handleCSVFile(files);
+});
+
+// CSVファイルを受け取る
+function handleCSVFile(files) {
     let result = document.getElementById('result');
     let reader = new FileReader();
     if (typeof files[0] !== 'undefined') {
@@ -53,7 +46,7 @@ dropBox.addEventListener('drop', function (e) {
         //ファイルが受け取れなかった際の処理
         alert('Can not load file.');
     }
-});
+}
 
 // クリックすると曲名と投稿者が表示される処理
 function clickToShowMusic(e) {
