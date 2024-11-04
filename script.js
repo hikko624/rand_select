@@ -39,6 +39,8 @@ function handleCSVFile(files) {
         //ファイルが正常に受け取れた際の処理
         reader.onload = () => {
             let output = createResult(reader.result);
+            let musicGameList = Object.values(submitMusicGameNameList);
+            alert("募集した機種が以下の"+ musicGameList.length + "機種であることを確認してください。\n\n・" +musicGameList.join('\n・') + "\n\n機種が少ない場合は、募集文の機種名が「」で囲まれているか確認してください。");
             result.append(output);
         };
         reader.readAsText(files[0]);
