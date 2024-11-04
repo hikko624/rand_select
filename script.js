@@ -166,6 +166,8 @@ function csvSplit(line) {
 
 // csvファイルを読み込んだらtableを作成する
 function createResult(result) {
+    let response = document.createElement('div');
+
     // 全機種選択曲表示のボタンを表示しイベントを追加
     let submitMusicButton = document.getElementById('submit-music');
     submitMusicButton.classList.remove('button-none');
@@ -176,7 +178,6 @@ function createResult(result) {
     // 各投稿者の投稿情報のリスト[timestamp, CN, musicName...]
     let tableHeadList = csvSplit(postInfoArray[0]);
     postInfoArray.shift();
-    let response = document.createElement('div');
 
     // 機種ごとに繰り返す
     for (let i = 2; i < tableHeadList.length; i++) {
@@ -191,8 +192,15 @@ function createResult(result) {
 
         // 機種名の抽出・登録
         var musicRecruitingText = document.createTextNode(tableHeadList[i]);
+        if (musicRecruitingText.textContent.includes('AC')) {
+            element.classList.add('game-ac');
+        }
+        else{
+            element.classList.add('game-cs');
+        }
         var musicGameName = musicRecruitingText.textContent.match(/[\u300c\uff62].*[\u300d\uff63]/)[0].slice(1,-1);
         submitMusicGameNameList['music' + i] = musicGameName;
+        element.classList.add("music"+i);
 
         // 見出し
         // 曲の行番号用
@@ -273,6 +281,28 @@ function createResult(result) {
         element.appendChild(tbl);
         response.appendChild(element);
     }
+
+    // AC機種を前にまとめて表示する処理
+    const elements = Array.from(response.children);
+    const gameACElements = elements.filter(el => el.classList.contains('game-ac'));
+    const otherElements = elements.filter(el => !el.classList.contains('game-ac'));
+    response.innerHTML = '';
+    gameACElements.forEach(el => response.appendChild(el));
+    otherElements.forEach(el => response.appendChild(el));
+
+    // 選択曲結果表示についても並び替えをする
+    // 各要素から「music」で始まるクラス名を取得しその順番に並び替える
+    const musicClasses = Array.from(response.children).map(el => {
+        return Array.from(el.classList).find(className => className.startsWith('music'));
+    }).filter(Boolean);
+    const musicGameList_tmp = {};
+    musicClasses.forEach(key => {
+        if (submitMusicGameNameList.hasOwnProperty(key)) {
+            musicGameList_tmp[key] = submitMusicGameNameList[key];
+        }
+    });
+    submitMusicGameNameList = musicGameList_tmp;
+    console.log(submitMusicGameNameList);
 
     return response;
 }
