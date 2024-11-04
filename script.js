@@ -189,12 +189,15 @@ function createResult(result) {
         var rowHead = document.createElement("tr");
         var cellHeadRowNum = document.createElement("td");
 
+        // 機種名の抽出・登録
+        var musicRecruitingText = document.createTextNode(tableHeadList[i]);
+        var musicGameName = musicRecruitingText.textContent.match(/[\u300c\uff62].*[\u300d\uff63]/)[0].slice(1,-1);
+        submitMusicGameNameList['music' + i] = musicGameName;
+
         // 見出し
         // 曲の行番号用
         cellHeadRowNum.appendChild(document.createTextNode("No."));
         var cellHeadMusicName = document.createElement("td");
-        var musicText = document.createTextNode(tableHeadList[i]);
-        submitMusicGameNameList['music' + i] = musicText.textContent.match(/[\u300c\uff62].*[\u300d\uff63]/)[0].slice(1,-1);
         cellHeadMusicName.appendChild(document.createTextNode("曲名"));
         var cellHeadPostName = document.createElement("td");
         cellHeadPostName.appendChild(document.createTextNode("投稿者"));
@@ -204,7 +207,6 @@ function createResult(result) {
         rowHead.appendChild(cellHeadPostName);
         rowHead.appendChild(cellHeadButton);
         tblHead.appendChild(rowHead);
-
 
         // 応募された項目
         var tblBody = document.createElement('tbody');
@@ -266,7 +268,7 @@ function createResult(result) {
         tbl.appendChild(tblBody);
         let subtitle = document.createElement('h2');
         subtitle.className = 'subtitle';
-        subtitle.appendChild(musicText);
+        subtitle.innerHTML = musicGameName;
         element.appendChild(subtitle);
         element.appendChild(tbl);
         response.appendChild(element);
