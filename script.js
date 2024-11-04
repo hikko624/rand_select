@@ -93,10 +93,7 @@ function popupMusicList() {
     let divDialog = document.getElementById('result-modal');
     divDialog.textContent = '';
     Object.keys(submitMusicGameNameList).map(musicId => {
-        let str = submitMusicGameNameList[musicId];
-        // カギカッコで囲われた機種名を取得
-        let musicGameName = str.match(/[\u300c\uff62].*[\u300d\uff63]/)[0].slice(1,-1);
-
+        let musicGameName = submitMusicGameNameList[musicId];
         divDialog.append('【' + musicGameName + '】\n');
         Object.keys(submitMusicNameList).map(musicPostId => {
             if (musicPostId.includes(musicId)) {
@@ -169,6 +166,7 @@ function csvSplit(line) {
 
 // csvファイルを読み込んだらtableを作成する
 function createResult(result) {
+    // 全機種選択曲表示のボタンを表示しイベントを追加
     let submitMusicButton = document.getElementById('submit-music');
     submitMusicButton.classList.remove('button-none');
     submitMusicButton.addEventListener('click', popupMusicList);
@@ -196,7 +194,7 @@ function createResult(result) {
         cellHeadRowNum.appendChild(document.createTextNode("No."));
         var cellHeadMusicName = document.createElement("td");
         var musicText = document.createTextNode(tableHeadList[i]);
-        submitMusicGameNameList['music' + i] = musicText.textContent;
+        submitMusicGameNameList['music' + i] = musicText.textContent.match(/[\u300c\uff62].*[\u300d\uff63]/)[0].slice(1,-1);
         cellHeadMusicName.appendChild(document.createTextNode("曲名"));
         var cellHeadPostName = document.createElement("td");
         cellHeadPostName.appendChild(document.createTextNode("投稿者"));

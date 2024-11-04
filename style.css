@@ -17,6 +17,11 @@ body {
     margin: 3%;
 }
 
+.text-red-bold {
+    color: red;
+    font-weight: bold;
+}
+
 .table-center {
     margin-left: auto;
     margin-right: auto;
