@@ -194,8 +194,7 @@ function createResult(result) {
         var musicRecruitingText = document.createTextNode(tableHeadList[i]);
         if (musicRecruitingText.textContent.includes('AC')) {
             element.classList.add('ac-game');
-        }
-        else{
+        } else{
             element.classList.add('cs-game');
         }
         var musicGameName = musicRecruitingText.textContent.match(/[\u300c\uff62].*[\u300d\uff63]/)[0].slice(1,-1);
