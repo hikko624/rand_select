@@ -6,19 +6,7 @@ let submitMusicGameNameList = {};
 // ファイルを選択するときの処理
 inputCsv.addEventListener('change', function (e) {
     let files = e.target.files;
-    let result = document.getElementById('result');
-    let reader = new FileReader();
-    if (typeof files[0] !== 'undefined') {
-        // ファイルが正常に受け取れた際の処理
-        reader.onload = () => {
-            let output = createResult(reader.result);
-            result.append(output);
-        };
-        reader.readAsText(files[0]);
-    } else {
-        // ファイルが受け取れなかった際の処理
-        alert('Can not load file.');
-    }
+    handleCSVFile(files);
 }, false);
 
 // ドラッグオーバー時の処理
@@ -40,12 +28,19 @@ dropBox.addEventListener('drop', function (e) {
 
     // ドロップしたファイルの取得
     let files = e.dataTransfer.files;
+    handleCSVFile(files);
+});
+
+// CSVファイルを受け取る
+function handleCSVFile(files) {
     let result = document.getElementById('result');
     let reader = new FileReader();
     if (typeof files[0] !== 'undefined') {
         //ファイルが正常に受け取れた際の処理
         reader.onload = () => {
             let output = createResult(reader.result);
+            let musicGameList = Object.values(submitMusicGameNameList);
+            alert('募集した機種が以下の'+ musicGameList.length + '機種であることを確認してください。\n\n・' +musicGameList.join('\n・') + '\n\n機種が少ない場合は、募集文の機種名が「」で囲まれているか確認してください。');
             result.append(output);
         };
         reader.readAsText(files[0]);
@@ -53,7 +48,7 @@ dropBox.addEventListener('drop', function (e) {
         //ファイルが受け取れなかった際の処理
         alert('Can not load file.');
     }
-});
+}
 
 // クリックすると曲名と投稿者が表示される処理
 function clickToShowMusic(e) {
@@ -76,7 +71,12 @@ function clickToShowName(e) {
 // スコアタ曲を決定する
 function clickToSubmit(e) {
     var buttonElement = document.getElementById(e.target.id);
-    var result = confirm('本当にこの曲にしますか？');
+
+    var musicGameId = buttonElement.id.split('p')[0];
+    // これまでにその機種で選ばれた曲数
+    var songCountSelected = Object.keys(submitMusicNameList).filter(key => key.includes(musicGameId)).length;
+
+    var result = confirm('本当にこの曲にしますか？\n'+submitMusicGameNameList[musicGameId]+'選択曲数: ' + songCountSelected + ' → ' + (songCountSelected+1));
     if (result) {
         var targetTableRow = buttonElement.parentElement.parentElement;
         targetTableRow.classList.add('music-submit');
@@ -92,14 +92,11 @@ function clickToSubmit(e) {
 function popupMusicList() {
     let divDialog = document.getElementById('result-modal');
     divDialog.textContent = '';
-    Object.keys(submitMusicGameNameList).map(musicId => {
-        let str = submitMusicGameNameList[musicId];
-        // カギカッコで囲われた機種名を取得
-        let musicGameName = str.match(/[\u300c\uff62].*[\u300d\uff63]/)[0].slice(1,-1);
-
+    Object.keys(submitMusicGameNameList).map(gameId => {
+        let musicGameName = submitMusicGameNameList[gameId];
         divDialog.append('【' + musicGameName + '】\n');
         Object.keys(submitMusicNameList).map(musicPostId => {
-            if (musicPostId.includes(musicId)) {
+            if (musicPostId.includes(gameId)) {
                 divDialog.append(submitMusicNameList[musicPostId] + '\n');
             }
         })
@@ -130,11 +127,11 @@ function csvSplit(line) {
     for (var i = 0; i < line.length; i++) {
 
         c = line.charAt(i);
-        if (c == "," && !inQuoteFlg) {
+        if (c == ',' && !inQuoteFlg) {
             data.push(s.toString());
             s = "";
         }
-        else if (c == "," && inQuoteFlg) {
+        else if (c == ',' && inQuoteFlg) {
             s = s + c;
         }
         // 入りの"
@@ -143,7 +140,7 @@ function csvSplit(line) {
         }
         else if (c == '"' && inQuoteFlg){
             // 抜けの"
-            if( [",","\n"].includes(line.charAt(i+1)) ) {
+            if( [',','\n'].includes(line.charAt(i+1)) ) {
                 inQuoteFlg = false;
             }
             // 本来の"はエクスポート時""にエスケープされているので、それを"に戻す
@@ -169,16 +166,18 @@ function csvSplit(line) {
 
 // csvファイルを読み込んだらtableを作成する
 function createResult(result) {
+    let response = document.createElement('div');
+
+    // 全機種選択曲表示のボタンを表示しイベントを追加
     let submitMusicButton = document.getElementById('submit-music');
     submitMusicButton.classList.remove('button-none');
     submitMusicButton.addEventListener('click', popupMusicList);
 
     // csvの整形
-    let postInfoArray = result.split("\n");
+    let postInfoArray = result.split('\n');
     // 各投稿者の投稿情報のリスト[timestamp, CN, musicName...]
     let tableHeadList = csvSplit(postInfoArray[0]);
     postInfoArray.shift();
-    let response = document.createElement('div');
 
     // 機種ごとに繰り返す
     for (let i = 2; i < tableHeadList.length; i++) {
@@ -188,25 +187,33 @@ function createResult(result) {
         var tbl = document.createElement('table');
         tbl.classList.add('table', 'table-center', 'music-table');
         var tblHead = document.createElement('thead');
-        var rowHead = document.createElement("tr");
-        var cellHeadRowNum = document.createElement("td");
+        var rowHead = document.createElement('tr');
+        var cellHeadRowNum = document.createElement('td');
+
+        // 機種名の抽出・登録
+        var musicRecruitingText = document.createTextNode(tableHeadList[i]);
+        if (musicRecruitingText.textContent.includes('AC')) {
+            element.classList.add('ac-game');
+        } else{
+            element.classList.add('cs-game');
+        }
+        var musicGameName = musicRecruitingText.textContent.match(/[\u300c\uff62].*[\u300d\uff63]/)[0].slice(1,-1);
+        submitMusicGameNameList['game' + i] = musicGameName;
+        element.classList.add('game'+i);
 
         // 見出し
         // 曲の行番号用
-        cellHeadRowNum.appendChild(document.createTextNode("No."));
-        var cellHeadMusicName = document.createElement("td");
-        var musicText = document.createTextNode(tableHeadList[i]);
-        submitMusicGameNameList['music' + i] = musicText.textContent;
-        cellHeadMusicName.appendChild(document.createTextNode("曲名"));
-        var cellHeadPostName = document.createElement("td");
-        cellHeadPostName.appendChild(document.createTextNode("投稿者"));
-        var cellHeadButton = document.createElement("td");
+        cellHeadRowNum.appendChild(document.createTextNode('No.'));
+        var cellHeadMusicName = document.createElement('td');
+        cellHeadMusicName.appendChild(document.createTextNode('曲名'));
+        var cellHeadPostName = document.createElement('td');
+        cellHeadPostName.appendChild(document.createTextNode('投稿者'));
+        var cellHeadButton = document.createElement('td');
         rowHead.appendChild(cellHeadRowNum);
         rowHead.appendChild(cellHeadMusicName);
         rowHead.appendChild(cellHeadPostName);
         rowHead.appendChild(cellHeadButton);
         tblHead.appendChild(rowHead);
-
 
         // 応募された項目
         var tblBody = document.createElement('tbody');
@@ -216,7 +223,7 @@ function createResult(result) {
         for (let j = 0; j < postInfoArray.length; j++) {
             var rowBody = document.createElement('tr');
             var postInfo = csvSplit(postInfoArray[j]);
-            var id = 'music' + i + 'post' + j;
+            var id = 'game' + i + 'post' + j;
             // 当日エラー起きたときに、その原因を見れるようにするために残す
             console.log({
                 'id': id,
@@ -268,11 +275,33 @@ function createResult(result) {
         tbl.appendChild(tblBody);
         let subtitle = document.createElement('h2');
         subtitle.className = 'subtitle';
-        subtitle.appendChild(musicText);
+        subtitle.innerHTML = musicGameName;
         element.appendChild(subtitle);
         element.appendChild(tbl);
         response.appendChild(element);
     }
+
+    // AC機種を前にまとめて表示する処理
+    const elements = Array.from(response.children);
+    const gameACElements = elements.filter(el => el.classList.contains('ac-game'));
+    const otherElements = elements.filter(el => !el.classList.contains('ac-game'));
+    response.innerHTML = '';
+    gameACElements.forEach(el => response.appendChild(el));
+    otherElements.forEach(el => response.appendChild(el));
+
+    // 選択曲結果表示についても並び替えをする
+    // 各要素から「game」で始まるクラス名を取得しその順番に並び替える
+    const musicClasses = Array.from(response.children).map(el => {
+        return Array.from(el.classList).find(className => className.startsWith('game'));
+    }).filter(Boolean);
+    const musicGameList_tmp = {};
+    musicClasses.forEach(key => {
+        if (submitMusicGameNameList.hasOwnProperty(key)) {
+            musicGameList_tmp[key] = submitMusicGameNameList[key];
+        }
+    });
+    submitMusicGameNameList = musicGameList_tmp;
+    console.log(submitMusicGameNameList);
 
     return response;
 }
