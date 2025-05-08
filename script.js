@@ -260,6 +260,15 @@ function createResult(result, isIgnoreOldData) {
                 continue;
             }
 
+            // 日時postInfo[0]が本日でない場合、スキップ
+            if (isIgnoreOldData) {
+                let rowDate = new Date(postInfo[0]).setHours(0, 0, 0, 0);
+                let today = new Date().setHours(0, 0, 0, 0);
+                if (rowDate < today) {
+                    continue;
+                }
+            }
+
             // 全ての改行コードを削除
             postInfo[i] = postInfo[i].replace(/\r?\n/g, '');
             // 両端の空白を削除
