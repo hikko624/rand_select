@@ -38,7 +38,31 @@ function handleCSVFile(files) {
     if (typeof files[0] !== 'undefined') {
         //ファイルが正常に受け取れた際の処理
         reader.onload = () => {
-            let output = createResult(reader.result);
+            // 過去のデータが含まれてるか確認し、使用者に破棄するか選択させる
+            let todayCount = 0;
+            let pastCount = 0;
+            let totalCount = 0;
+            let lines = reader.result.split('\n');
+            // ヘッダー行を無視
+            for (let i = 1; i < lines.length; i++) {
+                let row = csvSplit(lines[i]);
+                if (row[0]) {
+                    let rowDate = new Date(row[0]).setHours(0, 0, 0, 0);
+                    let today = new Date().setHours(0, 0, 0, 0);
+
+                    if (rowDate < today) {
+                        pastCount++;
+                    } else if (rowDate === today) {
+                        todayCount++;
+                    }
+                    totalCount++;
+                }
+            }
+            let isIgnoreOldData = false;
+            if (pastCount > 0) {
+                isIgnoreOldData = confirm('※※※ 警告 ※※※\n過去のデータが含まれています。\n\n- 今日: ' + todayCount + ' 件\n- 過去: ' + pastCount + ' 件\n\n過去のデータを破棄しますか？');
+            }
+            let output = createResult(reader.result, isIgnoreOldData);
             let musicGameList = Object.values(submitMusicGameNameList);
             alert('募集した機種が以下の'+ musicGameList.length + '機種であることを確認してください。\n\n・' +musicGameList.join('\n・') + '\n\n機種が少ない場合は、募集文の機種名が「」で囲まれているか確認してください。');
             result.append(output);
@@ -165,7 +189,7 @@ function csvSplit(line) {
 
 
 // csvファイルを読み込んだらtableを作成する
-function createResult(result) {
+function createResult(result, isIgnoreOldData) {
     let response = document.createElement('div');
 
     // 全機種選択曲表示のボタンを表示しイベントを追加
