@@ -40,7 +40,7 @@ function handleCSVFile(files) {
         reader.onload = () => {
             let output = createResult(reader.result);
             let musicGameList = Object.values(submitMusicGameNameList);
-            alert('募集した機種が以下の'+ musicGameList.length + '機種であることを確認してください。\n\n・' +musicGameList.join('\n・') + '\n\n機種が少ない場合は、募集文の機種名が「」で囲まれているか確認してください。');
+            alert('募集した機種が以下の'+ musicGameList.length + '機種であることを確認してください。\n\n・' +musicGameList.join('\n・') + '\n\n機種が少ない場合は、募集文の機種名が「」で囲まれているか確認してください。\n※投稿件数が0件の機種は上のリストに表示されません。');
             result.append(output);
         };
         reader.readAsText(files[0]);
@@ -220,6 +220,7 @@ function createResult(result) {
         // シャッフルする
         postInfoArray = shuffleWithinArray(postInfoArray);
         // 人ごとに繰り返す
+        let postCount = 0;
         for (let j = 0; j < postInfoArray.length; j++) {
             var rowBody = document.createElement('tr');
             var postInfo = csvSplit(postInfoArray[j]);
@@ -268,6 +269,8 @@ function createResult(result) {
             rowBody.appendChild(cellBodyPostName);
             rowBody.appendChild(cellBodyButton);
             tblBody.appendChild(rowBody);
+
+            postCount++;
         }
 
         // 整形
@@ -278,7 +281,10 @@ function createResult(result) {
         subtitle.innerHTML = musicGameName;
         element.appendChild(subtitle);
         element.appendChild(tbl);
-        response.appendChild(element);
+        // 投稿件数が0件の機種は表示しない
+        if (postCount > 0) {
+            response.appendChild(element);
+        }
     }
 
     // AC機種を前にまとめて表示する処理
